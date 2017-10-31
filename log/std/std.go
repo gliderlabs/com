@@ -32,14 +32,16 @@ func lookupOutput(output string) Output {
 }
 
 type Logger struct {
-	Config
-	*log.Logger
 	kvp map[string]interface{}
+
+	*log.Logger
+
+	Config
 }
 
 func (l *Logger) InitializeConfig(config config.Settings) error {
 	config.SetDefault("output", "stdout")
-	if err := config.Load(&(l.Config)); err != nil {
+	if err := config.Unmarshal(&(l.Config)); err != nil {
 		return err
 	}
 	l.SetPrefix(l.Config.Prefix)
@@ -47,8 +49,9 @@ func (l *Logger) InitializeConfig(config config.Settings) error {
 	return nil
 }
 
-func Register(registry *com.Registry) {
-	registry.Register(&com.Object{
+// Register the standard logger component with a registry
+func Register(registry *com.Registry) error {
+	return registry.Register(&com.Object{
 		Value: &Logger{
 			Logger: log.New(Stdout, "", log.LstdFlags),
 			kvp:    make(map[string]interface{}),
@@ -116,7 +119,7 @@ func (l *Logger) Debugf(template string, args ...interface{}) {
 }
 
 func (l *Logger) Debugw(msg string, keysAndValues ...interface{}) {
-	l.Print(l.format("DEBUG", msg,
+	l.Print(l.format("DEBUG ", msg,
 		l.mergeMaps(l.kvp,
 			l.argsToMap(keysAndValues))))
 }
@@ -130,21 +133,7 @@ func (l *Logger) Infof(template string, args ...interface{}) {
 }
 
 func (l *Logger) Infow(msg string, keysAndValues ...interface{}) {
-	l.Print(l.format("INFO", msg,
-		l.mergeMaps(l.kvp,
-			l.argsToMap(keysAndValues))))
-}
-
-func (l *Logger) Warn(args ...interface{}) {
-	l.Warnw(fmt.Sprint(args))
-}
-
-func (l *Logger) Warnf(template string, args ...interface{}) {
-	l.Warnw(fmt.Sprintf(template, args...))
-}
-
-func (l *Logger) Warnw(msg string, keysAndValues ...interface{}) {
-	l.Print(l.format("WARN", msg,
+	l.Print(l.format("INFO ", msg,
 		l.mergeMaps(l.kvp,
 			l.argsToMap(keysAndValues))))
 }
@@ -158,7 +147,7 @@ func (l *Logger) Errorf(template string, args ...interface{}) {
 }
 
 func (l *Logger) Errorw(msg string, keysAndValues ...interface{}) {
-	l.Print(l.format("ERROR", msg,
+	l.Print(l.format("ERROR ", msg,
 		l.mergeMaps(l.kvp,
 			l.argsToMap(keysAndValues))))
 }

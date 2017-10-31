@@ -3,74 +3,52 @@ package viper
 import (
 	"strings"
 
-	"github.com/gliderlabs/com"
 	"github.com/gliderlabs/com/config"
 	"github.com/spf13/viper"
 )
 
-type settings struct {
+// New returns an initialized Viper provider instance.
+func New() config.Provider {
+	v := viper.New()
+	return &Provider{v}
+}
+
+type Provider struct {
 	*viper.Viper
 }
 
-func (s *settings) Sub(key string) config.Settings {
-	return &settings{s.Viper.Sub(key)}
+func (p *Provider) Sub(key string) config.Settings {
+	sub := p.Viper.Sub(key)
+	// Sub somehow removes values set/overridden by environment, so we do this
+	// just to make sure they are set properly in this new Viper instance.
+	// UnmarshalKey could be used here except it has the same problem as Sub.
+	var keys map[string]map[string]interface{}
+	p.Unmarshal(&keys)
+	for k, v := range keys[key] {
+		sub.Set(k, v)
+	}
+	return &Provider{sub}
 }
 
-func (s *settings) Load(rawVal interface{}) error {
-	return s.Viper.Unmarshal(rawVal)
+func (p *Provider) Empty() config.Settings {
+	return New()
 }
 
-func (s *settings) LoadKey(key string, rawVal interface{}) error {
-	return s.Viper.UnmarshalKey(key, rawVal)
-}
-
-func Load(registry *com.Registry, name string, paths []string) error {
-	cfg := viper.New()
+func (p *Provider) Load(name string, paths []string) (config.Settings, error) {
+	// read in config files
 	if len(paths) > 0 && name != "" {
-		cfg.SetConfigName(name)
-		for _, p := range paths {
-			cfg.AddConfigPath(p)
+		p.SetConfigName(name)
+		for _, path := range paths {
+			p.AddConfigPath(path)
 		}
-		if err := cfg.ReadInConfig(); err != nil {
-			return err
-		}
-	}
-	cfg.AutomaticEnv()
-	cfg.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	var keys map[string]interface{}
-	if err := cfg.Unmarshal(&keys); err != nil {
-		return err
-	}
-	for _, obj := range registry.Objects() {
-		s := &settings{viper.New()}
-		for key, _ := range keys {
-			o, _ := registry.Lookup(key)
-			if o == obj {
-				s = &settings{cfg.Sub(key)}
-				break
-			}
-		}
-		if init, ok := obj.Value.(config.Initializer); ok {
-			if err := init.InitializeConfig(s); err != nil {
-				return err
-			}
-		}
-		for name, field := range obj.Fields {
-			if field.Config && s.IsSet(name) {
-				o, err := registry.Lookup(s.GetString(name))
-				if err != nil {
-					return err
-				}
-				obj.Assign(name, o)
-			}
+		if err := p.ReadInConfig(); err != nil {
+			return nil, err
 		}
 	}
-	if cfg.IsSet("disabled") {
-		var disabled map[string]bool
-		cfg.UnmarshalKey("disabled", &disabled)
-		for fqn, d := range disabled {
-			registry.SetEnabled(fqn, !d)
-		}
-	}
-	return registry.Reload()
+
+	// read config from environment
+	p.AutomaticEnv()
+	p.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	return p, nil
 }

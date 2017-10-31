@@ -5,7 +5,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func Register(registry *com.Registry) {
+// TODO: wrap for With
+// TODO: component for config
+
+// Register the zap logger component with a registry
+func Register(registry *com.Registry) error {
 	logger, _ := zap.NewDevelopment()
-	registry.Register(&com.Object{Value: logger.Sugar()})
+	return registry.Register(&com.Object{Value: logger.Sugar()})
 }

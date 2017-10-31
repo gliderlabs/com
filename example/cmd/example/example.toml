@@ -1,6 +1,0 @@
-[foobar]
-foobar = "ok"
-timeout = "5s"
-
-["log/std"]
-output = "stderr"

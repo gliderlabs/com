@@ -122,24 +122,31 @@ func (r *Registry) Register(objects ...*Object) error {
 }
 
 func (r *Registry) Lookup(name string) (*Object, error) {
+	// all matching is done case insensitive
+	name = strings.ToLower(name)
 	var matches []*Object
 	for _, obj := range r.Objects() {
+		// first match any exact FQN
 		if obj.FQN() == name {
 			return obj, nil
 		}
-		if obj.Name == name {
+		// name matches added to slice
+		if strings.ToLower(obj.Name) == name {
 			matches = append(matches, obj)
 		}
 	}
+	// if only one matched name, return
 	if len(matches) == 1 {
 		return matches[0], nil
 	}
+	// if more than one, error
 	if len(matches) > 1 {
 		return nil, errors.New("ambiguous name for lookup")
 	}
+	// now attempt suffix matches
 	matches = matches[:0]
 	for _, obj := range r.Objects() {
-		if strings.HasSuffix(obj.pkgPath, name) {
+		if strings.HasSuffix(strings.ToLower(obj.pkgPath), name) {
 			matches = append(matches, obj)
 		}
 	}
