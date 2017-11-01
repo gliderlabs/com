@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	envFormatter = "%_CONFIG"
+	envFormatter = "%s_CONFIG"
 	disabledKey  = "disabled"
 )
 
 // Load uses a Provider to read in configuration from various files and the
-// environment for the objects in a particualr Registry. It passes Settings for
+// environment for the objects in a particular Registry. It passes Settings for
 // each object to any object that implements the Initializer interface. Then it
 // will lookup any struct fields with `com:"config"` and use the settings for
 // that object to get the name of an object from the registry to assign to that
@@ -42,7 +42,7 @@ func Load(registry *com.Registry, provider Provider, name string, paths []string
 		s := provider.Empty()
 
 		// check if any top level key matches object
-		for key, _ := range keys {
+		for key := range keys {
 			o, _ := registry.Lookup(key)
 			if o == obj {
 				s = cfg.Sub(key)

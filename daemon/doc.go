@@ -3,8 +3,8 @@
 //
 // The top level function Run takes a registry and orchestrates the running of
 // a daemon based on suture.Services implemented in the registry. It also
-// has hooks for custom initalize and termination behavior.
-
+// has hooks for custom initialize and termination behavior.
+//
 // Daemon is also a great example of a simple component acting as a
 // micro-framework. It's built around an interface representing the idea of
 // "services". If daemon is not able to satisfy requirements with the use of

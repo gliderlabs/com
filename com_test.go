@@ -109,7 +109,7 @@ func TestAssigningNonexistantFieldsNoop(t *testing.T) {
 	}
 	obj := &Object{Value: &v}
 	if obj.Assign("B", &Object{Value: &Foo{}}) != false {
-		t.Fatal("assign allowed for non-existant field")
+		t.Fatal("assign allowed for non-existent field")
 	}
 }
 

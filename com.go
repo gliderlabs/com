@@ -15,10 +15,11 @@ const (
 )
 
 var (
+	// DefaultRegistry is often used as the single top level registry for an app
 	DefaultRegistry = &Registry{}
 )
 
-// An object in the registry
+// Object represents an object and its metadata in a registry
 type Object struct {
 	Value   interface{}
 	Name    string            // Optional
@@ -30,6 +31,7 @@ type Object struct {
 	pkgPath      string
 }
 
+// FQN returns a fully qualified name for a unique object in a registry
 func (o *Object) FQN() string {
 	return strings.ToLower(fmt.Sprintf("%s#%s", o.pkgPath, o.Name))
 }
@@ -39,12 +41,15 @@ func (o *Object) String() string {
 		return fmt.Sprintf("%s[disabled]", o.FQN())
 	}
 	var fields []string
-	for k, _ := range o.Fields {
+	for k := range o.Fields {
 		fields = append(fields, k)
 	}
 	return fmt.Sprintf("%s[%s]", o.FQN(), strings.Join(fields, " "))
 }
 
+// Assign will set a named field of the object value if it has not already
+// been assigned. It will not assign to fields marked as extension points.
+// It will return true if the assignment is successful.
 func (o *Object) Assign(field string, obj *Object) bool {
 	f, ok := o.Fields[field]
 	if !ok {
@@ -54,7 +59,7 @@ func (o *Object) Assign(field string, obj *Object) bool {
 	if !isNilOrZero(f.reflectValue, f.reflectValue.Type()) {
 		return false
 	}
-	// don't assign to extpoints becasue as slices they are handled differently
+	// don't assign to extpoints because as slices they are handled differently
 	if !f.Extpoint && obj.reflectType.AssignableTo(f.reflectValue.Type()) {
 		f.reflectValue.Set(reflect.ValueOf(obj.Value))
 		return true
@@ -62,6 +67,7 @@ func (o *Object) Assign(field string, obj *Object) bool {
 	return false
 }
 
+// Field represents metadata of a field in an Object value's struct.
 type Field struct {
 	Object   *Object
 	Name     string
@@ -72,14 +78,14 @@ type Field struct {
 	reflectValue reflect.Value
 }
 
+// Registry is a container for objects.
 type Registry struct {
 	sync.Mutex
 	objects  []*Object
 	disabled map[string]bool
 }
 
-// Register objects. The Object documentation describes
-// the impact of various fields.
+// Register adds objects to the registry.
 func (r *Registry) Register(objects ...*Object) error {
 	r.Lock()
 	defer r.Unlock()
@@ -121,7 +127,14 @@ func (r *Registry) Register(objects ...*Object) error {
 	return r.reload()
 }
 
+// Lookup will attempt to find an object in the registry...
+// 1. if it matches the object FQN exactly
+// 2. if it matches a single object Name
+// 3. if it matches a single object by package path suffix
 func (r *Registry) Lookup(name string) (*Object, error) {
+	// TODO: allow to choose to ignore disabled
+	// TODO: match suffix for full FQN? (pkgpath+name)
+
 	// all matching is done case insensitive
 	name = strings.ToLower(name)
 	var matches []*Object
@@ -159,6 +172,7 @@ func (r *Registry) Lookup(name string) (*Object, error) {
 	return nil, errors.New("object not found")
 }
 
+// SetEnabled will set whether an object is enabled.
 func (r *Registry) SetEnabled(fqn string, enabled bool) {
 	r.Lock()
 	defer r.Unlock()
@@ -178,7 +192,7 @@ func (r *Registry) initDisabled() {
 	}
 }
 
-// Objects returns all enabled objects.
+// Enabled returns all enabled objects.
 func (r *Registry) Enabled() []*Object {
 	r.Lock()
 	defer r.Unlock()
@@ -191,7 +205,7 @@ func (r *Registry) Enabled() []*Object {
 	return objects
 }
 
-// Objects returns all known objects.
+// Objects returns all registered objects.
 func (r *Registry) Objects() []*Object {
 	r.Lock()
 	defer r.Unlock()
@@ -202,6 +216,8 @@ func (r *Registry) Objects() []*Object {
 	return objects
 }
 
+// Reload will go over all objects in the registry and attempt to populate
+// fields with com struct tags with other objects in the registry.
 func (r *Registry) Reload() error {
 	r.Lock()
 	defer r.Unlock()

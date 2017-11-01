@@ -13,10 +13,12 @@ func New() config.Provider {
 	return &Provider{v}
 }
 
+// Provider is a config.Provider for Viper.
 type Provider struct {
 	*viper.Viper
 }
 
+// Sub returns new Settings instance representing a sub tree of this instance.
 func (p *Provider) Sub(key string) config.Settings {
 	sub := p.Viper.Sub(key)
 	// Sub somehow removes values set/overridden by environment, so we do this
@@ -30,10 +32,14 @@ func (p *Provider) Sub(key string) config.Settings {
 	return &Provider{sub}
 }
 
+// Empty returns an empty/new Settings instance.
 func (p *Provider) Empty() config.Settings {
 	return New()
 }
 
+// Load returns Settings for named configuration loaded from provided paths.
+// Leave the file extension off of name as supported format extensions will
+// automatically be added by Viper.
 func (p *Provider) Load(name string, paths []string) (config.Settings, error) {
 	// read in config files
 	if len(paths) > 0 && name != "" {

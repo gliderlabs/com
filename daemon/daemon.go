@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	// ErrNoServices is returned when there are no objects in the registry to start as services
 	ErrNoServices = errors.New("no services in registry to run")
 )
 
