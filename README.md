@@ -6,6 +6,7 @@ Component framework for Go
 [![CircleCI](https://img.shields.io/circleci/project/github/gliderlabs/com.svg)](https://circleci.com/gh/gliderlabs/com)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gliderlabs/com)](https://goreportcard.com/report/github.com/gliderlabs/com)
 [![Slack](http://slack.gliderlabs.com/badge.svg)](http://slack.gliderlabs.com)
+[![Email Updates](https://img.shields.io/badge/updates-subscribe-yellow.svg)](https://app.convertkit.com/landing_pages/289455)
 
 This package helps you organize your Go programs into logical components in a way
 that improves:
