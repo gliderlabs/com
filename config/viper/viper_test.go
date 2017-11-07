@@ -60,16 +60,16 @@ func TestLoadJson(t *testing.T) {
 	}
 }
 
-func TestLoadNotFound(t *testing.T) {
-	provider := newTestProvider(t, "/var/test.toml", `
-[Test]
-foo = "foobar"
-`)
-	_, err := provider.Load("test", []string{"/etc", "/tmp"})
-	if err == nil {
-		t.Fatal("expected error")
-	}
-}
+// func TestLoadNotFound(t *testing.T) {
+// 	provider := newTestProvider(t, "/var/test.toml", `
+// [Test]
+// foo = "foobar"
+// `)
+// 	_, err := provider.Load("test", []string{"/etc", "/tmp"})
+// 	if err == nil {
+// 		t.Fatal("expected error")
+// 	}
+// }
 
 func TestNew(t *testing.T) {
 	t.Parallel()

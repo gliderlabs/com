@@ -48,7 +48,13 @@ func (p *Provider) Load(name string, paths []string) (config.Settings, error) {
 			p.AddConfigPath(path)
 		}
 		if err := p.ReadInConfig(); err != nil {
-			return nil, err
+			switch err.(type) {
+			case viper.ConfigFileNotFoundError:
+				// it's fine!
+				break
+			default:
+				return nil, err
+			}
 		}
 	}
 

@@ -106,18 +106,6 @@ foo = "foobar"
 	fatal(t, err)
 }
 
-func TestLoadNotFound(t *testing.T) {
-	registry := &com.Registry{}
-	provider := newTestProvider(t, "/var/test.toml", `
-[TestComponent]
-foo = "foobar"
-`)
-	err := config.Load(registry, provider, "test", []string{"/etc", "/tmp"})
-	if err == nil {
-		t.Fatal("expected error")
-	}
-}
-
 func TestLoadInvalidFile(t *testing.T) {
 	registry := &com.Registry{}
 	provider := newTestProvider(t, "/etc/test.toml", `
