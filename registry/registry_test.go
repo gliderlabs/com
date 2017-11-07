@@ -1,4 +1,4 @@
-package com
+package registry
 
 import (
 	"testing"

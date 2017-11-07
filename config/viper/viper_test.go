@@ -18,6 +18,11 @@ func newTestProvider(t *testing.T, path, config string) *Provider {
 	return &Provider{v}
 }
 
+func getString(v interface{}) string {
+	vv, _ := v.(string)
+	return vv
+}
+
 func fatal(t *testing.T, err error) {
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +36,7 @@ foo = "foobar"
 `)
 	settings, err := provider.Load("test", []string{"/etc"})
 	fatal(t, err)
-	if got := settings.GetString("Test.foo"); got != "foobar" {
+	if got := getString(settings.Get("Test.foo")); got != "foobar" {
 		t.Fatalf("got %#v; want %#v", got, "foobar")
 	}
 }
@@ -43,7 +48,7 @@ Test:
 `)
 	settings, err := provider.Load("test", []string{"/etc"})
 	fatal(t, err)
-	if got := settings.GetString("Test.foo"); got != "foobar" {
+	if got := getString(settings.Get("Test.foo")); got != "foobar" {
 		t.Fatalf("got %#v; want %#v", got, "foobar")
 	}
 }
@@ -55,7 +60,7 @@ func TestLoadJson(t *testing.T) {
 }`)
 	settings, err := provider.Load("test", []string{"/etc"})
 	fatal(t, err)
-	if got := settings.GetString("Test.foo"); got != "foobar" {
+	if got := getString(settings.Get("Test.foo")); got != "foobar" {
 		t.Fatalf("got %#v; want %#v", got, "foobar")
 	}
 }
@@ -85,7 +90,7 @@ func TestNew(t *testing.T) {
 
 func TestEmpty(t *testing.T) {
 	t.Parallel()
-	settings := New().Empty()
+	settings := New().New()
 	var m map[string]interface{}
 	if err := settings.Unmarshal(&m); err != nil {
 		t.Fatal(err)
@@ -103,7 +108,7 @@ func TestSub(t *testing.T) {
 	})
 	provider := &Provider{v}
 	sub := provider.Sub("sub")
-	val := sub.GetString("key")
+	val := getString(sub.Get("key"))
 	if val != "value" {
 		t.Fatalf("expected 'value', got '%#v'", val)
 	}

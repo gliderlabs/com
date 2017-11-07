@@ -32,8 +32,8 @@ func (p *Provider) Sub(key string) config.Settings {
 	return &Provider{sub}
 }
 
-// Empty returns an empty/new Settings instance.
-func (p *Provider) Empty() config.Settings {
+// New returns an empty Settings instance.
+func (p *Provider) New() config.Settings {
 	return New()
 }
 

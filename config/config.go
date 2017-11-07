@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gliderlabs/com"
+	"github.com/gliderlabs/com/registry"
 )
 
 const (
@@ -20,7 +20,7 @@ const (
 // that object to get the name of an object from the registry to assign to that
 // field. It also disables any objects in the Registry referenced in the top-level
 // config section called "disabled".
-func Load(registry *com.Registry, provider Provider, name string, paths []string) error {
+func Load(registry *registry.Registry, provider Provider, name string, paths []string) error {
 	// add extra paths from environment
 	envConfig := os.Getenv(fmt.Sprintf(envFormatter, strings.ToUpper(name)))
 	paths = append(paths, strings.Split(envConfig, ":")...)
@@ -39,7 +39,7 @@ func Load(registry *com.Registry, provider Provider, name string, paths []string
 
 	// iterate over all objects in registry
 	for _, obj := range registry.Objects() {
-		s := provider.Empty()
+		s := provider.New()
 
 		// check if any top level key matches object
 		for key := range keys {
@@ -60,7 +60,11 @@ func Load(registry *com.Registry, provider Provider, name string, paths []string
 		// use config to lookup and set config fields
 		for name, field := range obj.Fields {
 			if field.Config && s.IsSet(name) {
-				o, err := registry.Lookup(s.GetString(name))
+				objName, ok := s.Get(name).(string)
+				if !ok {
+					continue
+				}
+				o, err := registry.Lookup(objName)
 				if err != nil {
 					return err
 				}

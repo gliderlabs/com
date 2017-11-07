@@ -6,7 +6,7 @@ import (
 	"plugin"
 	"strings"
 
-	"github.com/gliderlabs/com"
+	"github.com/gliderlabs/com/registry"
 	"github.com/spf13/afero"
 )
 
@@ -28,7 +28,7 @@ var (
 
 // Load will open Go shared object plugins, call the symbol Registerable, and
 // register objects returned.
-func Load(registry *com.Registry, name string, paths []string) error {
+func Load(registry *registry.Registry, name string, paths []string) error {
 	// get paths from environment
 	envPaths := os.Getenv(fmt.Sprintf(envFormatter, strings.ToUpper(name)))
 	paths = append(paths, strings.Split(envPaths, ":")...)
@@ -49,7 +49,7 @@ func Load(registry *com.Registry, name string, paths []string) error {
 	return nil
 }
 
-func loadPlugin(registry *com.Registry, filepath string) error {
+func loadPlugin(reg *registry.Registry, filepath string) error {
 	// open the shared object binary
 	p, err := plugin.Open(filepath)
 	if err != nil {
@@ -64,7 +64,7 @@ func loadPlugin(registry *com.Registry, filepath string) error {
 
 	// call function and register returned objects
 	for _, obj := range symbol.(func() []interface{})() {
-		registry.Register(&com.Object{Value: obj})
+		reg.Register(&registry.Object{Value: obj})
 	}
 
 	return nil

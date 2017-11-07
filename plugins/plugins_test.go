@@ -3,11 +3,11 @@ package plugins
 import (
 	"testing"
 
-	"github.com/gliderlabs/com"
+	"github.com/gliderlabs/com/registry"
 	"github.com/spf13/afero"
 )
 
-func mockLoadPlugin(registry *com.Registry, filepath string) error {
+func mockLoadPlugin(reg *registry.Registry, filepath string) error {
 	return nil
 }
 
@@ -24,8 +24,8 @@ func reset() {
 func TestLoadTODO(t *testing.T) {
 	setupMocks()
 	defer reset()
-	registry := &com.Registry{}
-	err := Load(registry, "test", []string{})
+	reg := &registry.Registry{}
+	err := Load(reg, "test", []string{})
 	if err != nil {
 		t.Fatal(err)
 	}

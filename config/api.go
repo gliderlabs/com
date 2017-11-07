@@ -1,42 +1,12 @@
 package config
 
-import "time"
-
 // Settings is an interface representing a collection of key-values from a
-// configuration or subset of a configuration.
+// configuration or subset of a configuration. 90% of the time you'll just
+// use Unmarshal into a struct, but sometimes you'll want to grab a specific
+// key. To encourage using structs, there are no typed getters.
 type Settings interface {
 	// Get returns the value associated with the key as an empty interface.
 	Get(key string) interface{}
-
-	// GetBool returns the value associated with the key as a boolean.
-	GetBool(key string) bool
-
-	// GetFloat64 returns the value associated with the key as a float64.
-	GetFloat64(key string) float64
-
-	// GetInt returns the value associated with the key as an integer.
-	GetInt(key string) int
-
-	// GetString returns the value associated with the key as a string.
-	GetString(key string) string
-
-	// GetStringMap returns the value associated with the key as a map of interfaces.
-	GetStringMap(key string) map[string]interface{}
-
-	// GetStringMapString returns the value associated with the key as a map of strings.
-	GetStringMapString(key string) map[string]string
-
-	// GetStringMapStringSlice returns the value associated with the key as a map to a slice of strings.
-	GetStringMapStringSlice(key string) map[string][]string
-
-	// GetStringSlice returns the value associated with the key as a slice of strings.
-	GetStringSlice(key string) []string
-
-	// GetTime returns the value associated with the key as time.
-	GetTime(key string) time.Time
-
-	// GetDuration returns the value associated with the key as a duration.
-	GetDuration(key string) time.Duration
 
 	// IsSet checks to see if the key has been set in configuration.
 	IsSet(key string) bool
@@ -63,8 +33,8 @@ type Provider interface {
 	// automatically be added.
 	Load(name string, paths []string) (Settings, error)
 
-	// Empty returns an empty/new Settings instance.
-	Empty() Settings
+	// New returns an empty Settings instance.
+	New() Settings
 
 	Settings
 }
