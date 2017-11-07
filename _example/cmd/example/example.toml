@@ -1,5 +1,0 @@
-[web]
-listen_addr = ":7000"
-
-[ssh]
-listen_addr = ":2222"
