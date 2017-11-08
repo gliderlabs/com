@@ -1,12 +1,12 @@
 package com
 
-import "github.com/gliderlabs/com/registry"
+import "github.com/gliderlabs/com/objects"
 
 var (
 	// DefaultRegistry is often used as the single top level registry for an app
-	DefaultRegistry = &registry.Registry{}
+	DefaultRegistry = &objects.Registry{}
 )
 
 func Register(obj interface{}, name string) error {
-	return DefaultRegistry.Register(&registry.Object{Value: obj, Name: name})
+	return DefaultRegistry.Register(objects.New(obj, name))
 }

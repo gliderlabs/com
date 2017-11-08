@@ -1,4 +1,4 @@
-package registry
+package objects
 
 import (
 	"errors"
@@ -24,6 +24,10 @@ type Object struct {
 
 	reflectType  reflect.Type
 	reflectValue reflect.Value
+}
+
+func New(v interface{}, name string) *Object {
+	return &Object{Value: v, Name: name}
 }
 
 // FQN returns a fully qualified name for a unique object in a registry

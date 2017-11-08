@@ -8,7 +8,7 @@ import (
 
 	"github.com/gliderlabs/com/config"
 	"github.com/gliderlabs/com/config/viper"
-	"github.com/gliderlabs/com/registry"
+	"github.com/gliderlabs/com/objects"
 	"github.com/spf13/afero"
 	viperlib "github.com/spf13/viper"
 )
@@ -53,9 +53,9 @@ func fatal(t *testing.T, err error) {
 }
 
 func TestLoadToml(t *testing.T) {
-	reg := &registry.Registry{}
+	reg := &objects.Registry{}
 	obj := &TestComponent{}
-	reg.Register(&registry.Object{Value: obj})
+	reg.Register(&objects.Object{Value: obj})
 	provider := newTestProvider(t, "/etc/test.toml", `
 [TestComponent]
 foo = "foobar"
@@ -68,9 +68,9 @@ foo = "foobar"
 }
 
 func TestLoadYaml(t *testing.T) {
-	reg := &registry.Registry{}
+	reg := &objects.Registry{}
 	obj := &TestComponent{}
-	reg.Register(&registry.Object{Value: obj})
+	reg.Register(&objects.Object{Value: obj})
 	provider := newTestProvider(t, "/etc/test.yaml", `
 TestComponent:
   foo: "foobar"
@@ -83,9 +83,9 @@ TestComponent:
 }
 
 func TestLoadJson(t *testing.T) {
-	reg := &registry.Registry{}
+	reg := &objects.Registry{}
 	obj := &TestComponent{}
-	reg.Register(&registry.Object{Value: obj})
+	reg.Register(&objects.Object{Value: obj})
 	provider := newTestProvider(t, "/etc/test.json", `
 {"TestComponent":
   {"foo": "foobar"}
@@ -98,7 +98,7 @@ func TestLoadJson(t *testing.T) {
 }
 
 func TestLoadFromWorkingDir(t *testing.T) {
-	reg := &registry.Registry{}
+	reg := &objects.Registry{}
 	wd, err := os.Getwd()
 	fatal(t, err)
 	// virtual FS will use real cwd since no way fake cwd resolution later
@@ -111,7 +111,7 @@ foo = "foobar"
 }
 
 func TestLoadInvalidFile(t *testing.T) {
-	reg := &registry.Registry{}
+	reg := &objects.Registry{}
 	provider := newTestProvider(t, "/etc/test.toml", `
 #!/usr/bin/python
 print "Hello world"
@@ -123,9 +123,9 @@ print "Hello world"
 }
 
 func TestInitializerError(t *testing.T) {
-	reg := &registry.Registry{}
+	reg := &objects.Registry{}
 	obj := &TestComponent{}
-	reg.Register(&registry.Object{Value: obj})
+	reg.Register(&objects.Object{Value: obj})
 	provider := newTestProvider(t, "/etc/test.toml", `
 [TestComponent]
 initerr = true
@@ -148,9 +148,9 @@ func TestConfigField(t *testing.T) {
 	var c struct {
 		Stringer fmt.Stringer `com:"config"`
 	}
-	reg := &registry.Registry{}
-	reg.Register(&registry.Object{Value: &c, Name: "Component"})
-	reg.Register(&registry.Object{Value: &stringer{"Foo"}, Name: "Fooer"})
+	reg := &objects.Registry{}
+	reg.Register(&objects.Object{Value: &c, Name: "Component"})
+	reg.Register(&objects.Object{Value: &stringer{"Foo"}, Name: "Fooer"})
 	provider := newTestProvider(t, "/etc/test.toml", `
 [Component]
 Stringer = "Fooer"
@@ -166,8 +166,8 @@ func TestConfigFieldNoObject(t *testing.T) {
 	var c struct {
 		Stringer fmt.Stringer `com:"config"`
 	}
-	reg := &registry.Registry{}
-	reg.Register(&registry.Object{Value: &c, Name: "Component"})
+	reg := &objects.Registry{}
+	reg.Register(&objects.Object{Value: &c, Name: "Component"})
 	provider := newTestProvider(t, "/etc/test.toml", `
 [Component]
 Stringer = "Fooer"
@@ -179,8 +179,8 @@ Stringer = "Fooer"
 }
 
 func TestDisabled(t *testing.T) {
-	reg := &registry.Registry{}
-	obj := &registry.Object{Value: &TestComponent{}}
+	reg := &objects.Registry{}
+	obj := &objects.Object{Value: &TestComponent{}}
 	reg.Register(obj)
 	provider := newTestProvider(t, "/etc/test.toml", `
 [TestComponent]
@@ -198,9 +198,9 @@ IgnoreMe = true
 }
 
 func TestEnvOverride(t *testing.T) {
-	reg := &registry.Registry{}
+	reg := &objects.Registry{}
 	obj := &TestComponent{}
-	reg.Register(&registry.Object{Value: obj})
+	reg.Register(&objects.Object{Value: obj})
 	provider := newTestProvider(t, "/etc/test.toml", `
 [TestComponent]
 foo = "foobar"

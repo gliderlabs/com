@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gliderlabs/com/registry"
+	"github.com/gliderlabs/com/objects"
 )
 
 const (
@@ -20,7 +20,7 @@ const (
 // that object to get the name of an object from the registry to assign to that
 // field. It also disables any objects in the Registry referenced in the top-level
 // config section called "disabled".
-func Load(registry *registry.Registry, provider Provider, name string, paths []string) error {
+func Load(registry *objects.Registry, provider Provider, name string, paths []string) error {
 	// add extra paths from environment
 	envConfig := os.Getenv(fmt.Sprintf(envFormatter, strings.ToUpper(name)))
 	paths = append(paths, strings.Split(envConfig, ":")...)
