@@ -3,12 +3,10 @@
 A component-oriented approach to building Golang applications
 
 [![GoDoc](https://godoc.org/github.com/gliderlabs/com?status.svg)](https://godoc.org/github.com/gliderlabs/com)
-[![CircleCI](https://img.shields.io/circleci/project/github/gliderlabs/com.svg)](https://circleci.com/gh/gliderlabs/com)*
+[![CircleCI](https://img.shields.io/circleci/project/github/gliderlabs/com.svg)](https://circleci.com/gh/gliderlabs/com)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gliderlabs/com)](https://goreportcard.com/report/github.com/gliderlabs/com)
 [![Slack](http://slack.gliderlabs.com/badge.svg)](http://slack.gliderlabs.com)
 [![Email Updates](https://img.shields.io/badge/updates-subscribe-yellow.svg)](https://app.convertkit.com/landing_pages/289455)
-
-_* Build is failing because of an [upstream issue](https://github.com/gliderlabs/com/issues/1) with a [PR](https://github.com/spf13/viper/pull/405) waiting to be merged_
 
 ## Concept
 
@@ -36,10 +34,10 @@ the usual Go package.
 
 ## Example application
 
+See the [example wiki app repo](https://github.com/gl-prototypes/wiki).
+
 By building out [reusable components](https://github.com/gliderlabs/stdcom), a simple wiki with GitHub authentication
 could be put together in ~200 lines of Go as a single component.
-
-See the [example wiki app repo](https://github.com/gl-prototypes/wiki).
 
 ## Using com
 
