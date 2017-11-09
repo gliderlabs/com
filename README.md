@@ -11,33 +11,25 @@ A component-oriented approach to building Golang applications
 ## Concept
 
 We want to see a world with great "building blocks" where you can quickly build
-whatever you want. Simple and composable is not enough, they need to integrate
-and hook into each other.
+whatever you want. Traditional "composability" is not enough, they need to
+integrate and hook into each other.
 
-This library provides the core mechanisms needed to build out a component
-architecture for your applications that also extend into an ecosystem of reusable
-components.
+This library provides the core mechanisms needed to build out a modular and
+extensible component architecture for your application, which also extend into
+an ecosystem of "drop-in" reusable components.
 
 There are two parts to this package that are designed to work with each other:
 
  * An object registry for interface-based extension points and dependency injection
  * A configuration API for settings, disabling objects, and picking interface backends
 
-The API and even core functionality alone doesn't imply how we build components
-with this tool. We can formalize much of this in a proper framework project once
-we've determined the conventions. Until then, we can focus on examples and our
-small but growing library of [standard components](https://github.com/gliderlabs/stdcom).
-
-In the end, this package helps facilitates structuring Go programs into modular and
-extensible components that become much more drop-in building blocks than
-the usual Go package.
-
 ## Example application
 
 See the [example wiki app repo](https://github.com/gl-prototypes/wiki).
 
-By building out [reusable components](https://github.com/gliderlabs/stdcom), a simple wiki with GitHub authentication
-could be put together in ~200 lines of Go as a single component.
+After building out [reusable components](https://github.com/gliderlabs/stdcom),
+a simple wiki with GitHub authentication could be put together in ~200 lines of
+Go as a single component.
 
 ## Using com
 

@@ -26,6 +26,7 @@ type Object struct {
 	reflectValue reflect.Value
 }
 
+// New creates a new Object by value and name
 func New(v interface{}, name string) *Object {
 	return &Object{Value: v, Name: name}
 }
