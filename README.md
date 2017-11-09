@@ -10,6 +10,8 @@ A component-oriented approach to building Golang applications
 
 _* Build is failing because of an [upstream issue](https://github.com/gliderlabs/com/issues/1) with a [PR](https://github.com/spf13/viper/pull/405) waiting to be merged_
 
+## Concept
+
 We want to see a world with great "building blocks" where you can quickly build
 whatever you want. Simple and composable is not enough, they need to integrate
 and hook into each other.
@@ -32,7 +34,17 @@ In the end, this package helps facilitates structuring Go programs into modular 
 extensible components that become much more drop-in building blocks than
 the usual Go package.
 
-More documentation soon.
+## Example application
+
+By building out [reusable components](https://github.com/gliderlabs/stdcom), a simple wiki with GitHub authentication
+could be put together in ~200 lines of Go as a single component.
+
+See the [example wiki app repo](https://github.com/gl-prototypes/wiki).
+
+## Using com
+
+For now, see [GoDocs](https://godoc.org/github.com/gliderlabs/com), the
+example application, and the components in [stdcom](https://github.com/gliderlabs/stdcom).
 
 ## Dependencies
 
