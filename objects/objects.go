@@ -221,6 +221,24 @@ func (r *Registry) Objects() []*Object {
 	return objects
 }
 
+func (r *Registry) ValueTo(rv reflect.Value) {
+	for _, obj := range r.Objects() {
+		robj := reflect.ValueOf(obj.Value)
+		if rv.Elem().Type().Kind() == reflect.Struct {
+			if robj.Elem().Type().AssignableTo(rv.Elem().Type()) {
+				rv.Elem().Set(robj.Elem())
+				break
+			}
+		} else {
+			if robj.Type().Implements(rv.Elem().Type()) {
+				rv.Elem().Set(robj)
+				break
+			}
+		}
+	}
+
+}
+
 // Reload will go over all objects in the registry and attempt to populate
 // fields with com struct tags with other objects in the registry.
 func (r *Registry) Reload() error {
